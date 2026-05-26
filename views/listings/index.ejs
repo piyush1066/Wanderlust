@@ -1,0 +1,468 @@
+<% layout("/layouts/boilerplate") %>
+  <style>
+    .listings-page {
+      padding-bottom: 2rem;
+    }
+
+    .filter-panel {
+      position: sticky;
+      top: 5rem;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.96);
+      border-bottom: 1px solid #ebebeb;
+      padding: 1rem 0;
+      backdrop-filter: blur(12px);
+    }
+
+    #filters {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      overflow-x: auto;
+      padding-bottom: 0.3rem;
+      scrollbar-width: thin;
+    }
+
+    .filters {
+      min-width: 78px;
+      text-align: center;
+      color: #222;
+      opacity: 0.72;
+      padding: 0.45rem 0.65rem;
+      border-radius: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .filters:hover {
+      background-color: #f7f7f7;
+      color: #000;
+      opacity: 1;
+    }
+
+    .filters i {
+      font-size: 1.15rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .filters p {
+      font-size: 0.78rem;
+      margin-bottom: 0;
+      white-space: nowrap;
+    }
+
+    .filter-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    .tax-info {
+      display: none;
+    }
+
+    .tax-toggle {
+      border: 1px solid #ddd;
+      border-radius: 0.9rem;
+      min-height: 3rem;
+      padding: 0.65rem 0.9rem;
+      display: flex;
+      align-items: center;
+      background-color: #fff;
+    }
+
+    .price-filter {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .price-input {
+      width: 130px;
+      padding: 0.55rem 0.75rem;
+      border-radius: 0.65rem;
+      border: 1px solid #d6d6d6;
+      outline: none;
+    }
+
+    .price-input:focus {
+      border-color: #fe424d;
+      box-shadow: 0 0 0 0.15rem rgba(254, 66, 77, 0.12);
+    }
+
+    .price-btn {
+      border: none;
+      background-color: #fe424d;
+      color: white;
+      padding: 0.58rem 1.15rem;
+      border-radius: 0.7rem;
+      font-weight: 600;
+    }
+
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin: 1.75rem 0 1rem;
+    }
+
+    .recent-listings {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+
+    .recent-card {
+      border: 1px solid #eee;
+      border-radius: 0.9rem;
+      overflow: hidden;
+      height: 100%;
+      background-color: white;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .recent-card:hover,
+    .top-card:hover,
+    .listing-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .recent-card img {
+      width: 100%;
+      height: 105px;
+      object-fit: cover;
+    }
+
+    .recent-card .card-body {
+      padding: 0.7rem;
+    }
+
+    .recent-card .card-text {
+      color: #222;
+      font-size: 0.85rem;
+      line-height: 1.25;
+      margin-bottom: 0;
+    }
+
+    .top-rated-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .top-card {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      background: white;
+      border: 1px solid #eee;
+      border-radius: 0.9rem;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .top-card-img {
+      width: 92px;
+      height: 92px;
+      object-fit: cover;
+      flex: 0 0 auto;
+    }
+
+    .top-card-body {
+      min-width: 0;
+      padding: 0.75rem;
+    }
+
+    .top-card-title {
+      color: #222;
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 0.35rem;
+    }
+
+    .top-card-rating {
+      color: #555;
+      font-size: 0.85rem;
+    }
+
+    .listings-grid {
+      margin-top: 0.5rem;
+    }
+
+    .listing-card {
+      height: 100%;
+      border: 1px solid #eee !important;
+      border-radius: 1rem;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .listing-card .card-body {
+      padding: 0.9rem 0.95rem 1rem;
+    }
+
+    .listing-title {
+      color: #222;
+      display: block;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.25rem;
+    }
+
+    .listing-price {
+      color: #444;
+      margin-bottom: 0;
+    }
+
+    .image-container {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .show-img {
+      height: 230px;
+      transition: transform 0.35s ease, filter 0.35s ease;
+    }
+
+    .listing-card:hover .show-img {
+      transform: scale(1.04);
+      filter: brightness(0.95);
+    }
+
+    .wishlist-form {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      z-index: 2;
+    }
+
+    .wishlist-btn {
+      border: none;
+      background: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+    }
+
+    .wishlist-btn i,
+    .heart-icon {
+      color: #fe424d;
+      font-size: 1.15rem;
+    }
+
+    body.dark-mode .filter-panel,
+    body.dark-mode .tax-toggle,
+    body.dark-mode .recent-card,
+    body.dark-mode .top-card {
+      background-color: #1e1e1e;
+      border-color: #333;
+    }
+
+    body.dark-mode .filters,
+    body.dark-mode .recent-card .card-text,
+    body.dark-mode .top-card-title,
+    body.dark-mode .listing-title,
+    body.dark-mode .listing-price {
+      color: white;
+    }
+
+    body.dark-mode .filters:hover {
+      background-color: #282828;
+    }
+
+    @media (max-width: 768px) {
+      .filter-panel {
+        position: static;
+      }
+
+      .filter-actions {
+        align-items: stretch;
+      }
+
+      .tax-toggle,
+      .price-filter {
+        width: 100%;
+      }
+
+      .price-input {
+        flex: 1 1 120px;
+      }
+
+      .price-btn {
+        flex: 1 1 100%;
+      }
+
+      .top-rated-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <div class="listings-page">
+    <div class="filter-panel">
+      <div id="filters">
+        <a class="filters listing-link" href="/listings">
+          <div><i class="fa-solid fa-border-all"></i></div>
+          <p>All</p>
+        </a>
+        <a class="filters listing-link" href="/listings/filter/Trending">
+          <div><i class="fa-solid fa-fire"></i></div>
+          <p>Trending</p>
+        </a>
+        <a class="filters listing-link" href="/listings/filter/Rooms">
+          <div><i class="fa-solid fa-bed"></i></div>
+          <p>Rooms</p>
+        </a>
+        <a class="filters listing-link" href="/listings/filter/Iconic%20Cities">
+          <div><i class="fa-solid fa-mountain-city"></i></div>
+          <p>Iconic Cities</p>
+        </a>
+        <a class="filters listing-link" href="/listings/filter/Mountains">
+          <div><i class="fa-solid fa-cable-car"></i></div>
+          <p>Mountains</p>
+        </a>
+        <a class="filters listing-link" href="/listings/filter/Castles">
+          <div><i class="fa-brands fa-fort-awesome"></i></div>
+          <p>Castles</p>
+        </a>
+        <a class="filters listing-link" href="/listings/filter/Amazing%20Pools">
+          <div><i class="fa-solid fa-person-swimming"></i></div>
+          <p>Amazing Pools</p>
+        </a>
+        <a class="filters listing-link" href="/listings/filter/Camping">
+          <div><i class="fa-solid fa-house-flag"></i></div>
+          <p>Camping</p>
+        </a>
+        <a class="filters listing-link" href="/listings/filter/Farms">
+          <div><i class="fa-solid fa-tractor"></i></div>
+          <p>Farms</p>
+        </a>
+        <a class="filters listing-link" href="/listings/filter/Arctic">
+          <div><i class="fa-solid fa-snowman"></i></div>
+          <p>Arctic</p>
+        </a>
+        <a class="filters listing-link" href="/listings/filter/Beach">
+          <div><i class="fa-solid fa-umbrella-beach"></i></div>
+          <p>Beach</p>
+        </a>
+      </div>
+      <div class="filter-actions">
+        <div class="tax-toggle">
+          <div class="form-check form-switch mb-0">
+            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+            <label class="form-check-label" for="flexSwitchCheckDefault">Display total after taxes</label>
+          </div>
+        </div>
+        <form action="/listings" method="GET" class="price-filter">
+          <input type="number" name="minPrice" placeholder="Min Price" class="price-input">
+          <input type="number" name="maxPrice" placeholder="Max Price" class="price-input">
+          <button class="price-btn">Apply</button>
+        </form>
+      </div>
+    </div>
+    <% if(recentListings.length> 0) { %>
+      <h3 class="section-title">Recently Viewed</h3>
+      <div class="recent-listings">
+        <% for(let listing of recentListings) { %>
+          <a href="/listings/<%= listing._id %>" class="listing-link">
+            <div class="recent-card">
+              <img src="<%= listing.image?.url %>" alt="<%= listing.title %>">
+              <div class="card-body">
+                <p class="card-text"><b>
+                    <%= listing.title %>
+                  </b></p>
+              </div>
+            </div>
+          </a>
+          <% } %>
+      </div>
+      <% } %>
+        <h3 class="section-title">Top Rated Stays</h3>
+        <div class="top-rated-grid">
+          <% if(typeof topRatedListings !=='undefined' ) { %>
+
+            <% topRatedListings.forEach((listing)=> { %>
+
+              <a href="/listings/<%= listing._id %>" class="listing-link">
+                <div class="top-card">
+                  <img src="<%= listing.image?.url %>" class="top-card-img" alt="<%= listing.title %>">
+                  <div class="top-card-body">
+                    <p class="top-card-title text-truncate">
+                      <%= listing.title %>
+                    </p>
+                    <small class="top-card-rating">
+                      <i class="fa-solid fa-star"></i>
+                      <%= listing.averageRating ? listing.averageRating.toFixed(1) : "0.0" %>
+                    </small>
+                  </div>
+                </div>
+              </a>
+
+              <% }) %>
+
+                <% } %>
+
+
+        </div>
+        <h3 class="section-title">Explore Stays</h3>
+        <div class="listings-grid row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+          <% for(let listing of alllistings) { %>
+            <div class="col">
+              <div class="listing-card card">
+                <% if(listing.isRecent) { %>
+                  <span class="badge bg-success position-absolute top-0 start-0 m-2 z-2">NEW</span>
+                  <% } %>
+                    <div class="image-container">
+                      <a href="/listings/<%= listing._id %>" class="listing-link">
+                        <img src="<%= listing.image?.url %>" class="card-img-top show-img" alt="<%= listing.title %>">
+                      </a>
+                      <form action="/listings/<%= listing._id %>/wishlist?_method=POST" method="POST"
+                        class="wishlist-form">
+                        <button class="wishlist-btn" type="submit" aria-label="Save listing">
+                          <i
+                            class="<%= savedListings.includes(listing._id.toString()) ? 'fa-solid' : 'fa-regular' %> fa-heart heart-icon"></i>
+                        </button>
+                      </form>
+                    </div>
+                    <div class="card-body">
+                      <a href="/listings/<%= listing._id %>" class="listing-link">
+                        <span class="listing-title">
+                          <%= listing.title %>
+                        </span>
+                        <p class="listing-price">
+                          &#8377; <%= listing.price.toLocaleString("en-IN") %> / night
+                            <i class="tax-info"> + 18% GST</i>
+                        </p>
+                      </a>
+                    </div>
+              </div>
+            </div>
+            <% } %>
+        </div>
+  </div>
+  <script>
+    const taxSwitch = document.getElementById("flexSwitchCheckDefault");
+    taxSwitch.addEventListener("click", () => {
+      const taxInfo = document.getElementsByClassName("tax-info");
+      for (const info of taxInfo) {
+        info.style.display = info.style.display !== "inline" ? "inline" : "none";
+      }
+    });
+    const wishlistBtns = document.querySelectorAll(".wishlist-btn");
+    wishlistBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const icon = btn.querySelector(".heart-icon");
+        icon.classList.toggle("fa-regular");
+        icon.classList.toggle("fa-solid");
+      });
+    });
+  </script>

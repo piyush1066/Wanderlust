@@ -1,0 +1,84 @@
+<style>
+    .btn-search{
+        background-color: #fe424d;
+        color: white;
+        border-radius: 2rem;
+        white-space: nowrap;
+    }
+    .btn-search:hover{
+        background-color: #fe424d;
+        color: white;
+    }
+    .ipt-btn{
+        border-radius: 2rem;
+        width: min(38vw, 520px);
+        min-width: 220px;
+    }
+
+    .search-form {
+        max-width: 640px;
+        width: 100%;
+    }
+
+    @media (max-width: 991px) {
+        .navbar-collapse {
+            background-color: white;
+            border-radius: 0 0 1rem 1rem;
+            padding: 1rem 0;
+        }
+
+        .search-form {
+            margin: 0.75rem 0 !important;
+            width: 100%;
+        }
+
+        .ipt-btn {
+            width: 100%;
+            min-width: 0;
+        }
+    }
+
+</style>
+<nav class="navbar navbar-expand-lg bg-light border-bottom sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/listings"><i class="fa-solid fa-compass"></i></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+
+    <div class="navbar-nav">
+        <a class="nav-link" href="/listings">Explore</a>
+        <a class="nav-link" href="/listings/new">Airbnb your home</a>
+        <a class="nav-link" href="/listings/wishlist">Trips board</a>
+    </div>
+    
+
+   <form class="d-flex mx-auto search-form"action="/listings/search" method="GET">
+        <input 
+            class="form-control me-2 search-input ipt-btn" 
+            type="search" 
+            placeholder="Search destinations"
+            name="q">
+
+        <button class="btn btn-search" type="submit">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            Search
+        </button>
+       
+    </form>
+
+    <div class="navbar-nav">
+        <% if(!currUser){ %>
+            <a class="nav-link" href="/signup"><b>Sign Up</b></a>
+            <a class="nav-link" href="/login"><b>Log in</b></a>
+        <% } %>
+
+        <% if(currUser){ %>
+            <a class="nav-link" href="/logout"><b>Log out</b></a>
+        <% } %>
+    </div>
+
+</div>
+    </div>
+</nav>

@@ -1,0 +1,197 @@
+<% layout("/layouts/boilerplate") %>
+
+<style>
+  .listing-form-page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 1.75rem 0 3rem;
+  }
+
+  .form-header {
+    margin-bottom: 1.25rem;
+  }
+
+  .form-title {
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    font-weight: 800;
+    margin-bottom: 0.35rem;
+  }
+
+  .form-subtitle {
+    color: #666;
+    margin-bottom: 0;
+  }
+
+  .listing-form-card {
+    border: 1px solid #e8e8e8;
+    border-radius: 1rem;
+    background-color: #fff;
+    padding: 1.4rem;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.05);
+  }
+
+  .form-section {
+    border-bottom: 1px solid #ededed;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1.25rem;
+  }
+
+  .form-section:last-of-type {
+    border-bottom: 0;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .form-section-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .listing-form-card .form-control,
+  .listing-form-card .form-select {
+    border-radius: 0.75rem;
+    padding: 0.68rem 0.85rem;
+  }
+
+  .listing-form-card textarea {
+    min-height: 130px;
+  }
+
+  .listing-form-card .form-control:focus,
+  .listing-form-card .form-select:focus {
+    border-color: #fe424d;
+    box-shadow: 0 0 0 0.15rem rgba(254, 66, 77, 0.12);
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.35rem;
+  }
+
+  .primary-form-btn {
+    border: none;
+    border-radius: 0.75rem;
+    background-color: #fe424d;
+    color: white;
+    font-weight: 700;
+    padding: 0.68rem 1.25rem;
+  }
+
+  .secondary-form-btn {
+    border-radius: 0.75rem;
+    padding: 0.68rem 1.25rem;
+  }
+
+  body.dark-mode .listing-form-card {
+    background-color: #1e1e1e;
+    border-color: #333;
+  }
+
+  body.dark-mode .form-subtitle {
+    color: #ddd;
+  }
+
+  body.dark-mode .form-section {
+    border-color: #333;
+  }
+
+  @media (max-width: 576px) {
+    .listing-form-card {
+      padding: 1rem;
+    }
+
+    .form-actions {
+      flex-direction: column-reverse;
+    }
+
+    .form-actions .btn,
+    .primary-form-btn {
+      width: 100%;
+    }
+  }
+</style>
+
+<div class="listing-form-page">
+  <div class="form-header">
+    <h1 class="form-title">Create a New Listing</h1>
+    <p class="form-subtitle">Add the stay details guests need before they book.</p>
+  </div>
+
+  <form action="/listings" method="POST" class="listing-form-card needs-validation" enctype="multipart/form-data" novalidate>
+    <div class="form-section">
+      <h2 class="form-section-title">Basics</h2>
+
+      <div class="row g-3">
+        <div class="col-md-8">
+          <label for="title" class="form-label">Title</label>
+          <input type="text" id="title" name="listing[title]" placeholder="Cozy villa near the beach" class="form-control" required>
+          <div class="invalid-feedback">Please enter a title.</div>
+        </div>
+
+        <div class="col-md-4">
+          <label for="category" class="form-label">Category</label>
+          <select id="category" name="listing[category]" class="form-select" required>
+            <option value="" selected disabled>Choose category</option>
+            <option value="Trending">Trending</option>
+            <option value="Rooms">Rooms</option>
+            <option value="Iconic Cities">Iconic Cities</option>
+            <option value="Mountains">Mountains</option>
+            <option value="Castles">Castles</option>
+            <option value="Amazing Pools">Amazing Pools</option>
+            <option value="Camping">Camping</option>
+            <option value="Farms">Farms</option>
+            <option value="Arctic">Arctic</option>
+            <option value="Beach">Beach</option>
+          </select>
+          <div class="invalid-feedback">Please choose a category.</div>
+        </div>
+
+        <div class="col-12">
+          <label for="description" class="form-label">Description</label>
+          <textarea id="description" name="listing[description]" class="form-control" placeholder="Describe the rooms, view, nearby places, and what makes it special." required></textarea>
+          <div class="invalid-feedback">Please enter a short description.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h2 class="form-section-title">Location and Pricing</h2>
+
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label for="price" class="form-label">Price per night</label>
+          <input type="number" id="price" name="listing[price]" placeholder="5000" min="0" class="form-control" required>
+          <div class="invalid-feedback">Please enter a valid price.</div>
+        </div>
+
+        <div class="col-md-4">
+          <label for="location" class="form-label">Location</label>
+          <input type="text" id="location" name="listing[location]" placeholder="Goa" class="form-control" required>
+          <div class="invalid-feedback">Please enter the location.</div>
+        </div>
+
+        <div class="col-md-4">
+          <label for="country" class="form-label">Country</label>
+          <input type="text" id="country" name="listing[country]" placeholder="India" class="form-control" required>
+          <div class="invalid-feedback">Please enter the country.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h2 class="form-section-title">Photo</h2>
+
+      <label for="image" class="form-label">Upload Image</label>
+      <input type="file" id="image" name="listing[image]" class="form-control" accept="image/*" required>
+      <div class="invalid-feedback">Please upload an image.</div>
+    </div>
+
+    <div class="form-actions">
+      <a href="/listings" class="btn btn-outline-secondary secondary-form-btn">Cancel</a>
+      <button type="submit" class="primary-form-btn">Create Listing</button>
+    </div>
+  </form>
+</div>

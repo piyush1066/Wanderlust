@@ -1,0 +1,406 @@
+<% layout("/layouts/boilerplate") %>
+
+    <style>
+        .show-page {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 1.5rem 0 3rem;
+        }
+
+        .show-title {
+            font-size: clamp(1.7rem, 4vw, 2.4rem);
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 0.45rem;
+        }
+
+        .show-location {
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .show-shell {
+            display: grid;
+            grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.55fr);
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        .show-media {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+            background-color: #f7f7f7;
+        }
+
+        .show-img {
+            width: 100%;
+            height: clamp(320px, 48vw, 520px);
+            object-fit: cover;
+            border-radius: 1rem !important;
+            display: block;
+        }
+
+        .wishlist-form {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 2;
+        }
+
+        .wishlist-btn {
+            border: none;
+            background: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+        }
+
+        .wishlist-btn i,
+        .heart-icon {
+            color: #fe424d;
+            font-size: 1.25rem;
+        }
+
+        .details-panel,
+        .description-card,
+        .review-form-panel,
+        .review-card {
+            border: 1px solid #e8e8e8;
+            border-radius: 1rem;
+            background-color: #fff;
+            padding: 1.2rem;
+        }
+
+        .details-panel {
+            position: sticky;
+            top: 6.25rem;
+        }
+
+        .price-line {
+            font-size: 1.35rem;
+            font-weight: 800;
+            margin-bottom: 0.9rem;
+        }
+
+        .price-line span {
+            color: #555;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .detail-list {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0;
+        }
+
+        .detail-item {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            color: #333;
+        }
+
+        .detail-item i {
+            color: #fe424d;
+            margin-top: 0.15rem;
+            width: 18px;
+            text-align: center;
+        }
+
+        .description-card {
+            margin-top: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .owner-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1.1rem;
+        }
+
+        .owner-actions .btn,
+        .review-submit {
+            border-radius: 0.75rem;
+            padding: 0.58rem 1.1rem;
+        }
+
+        .edit-btn {
+            background-color: #fe424d !important;
+            border: none !important;
+        }
+
+        .divider {
+            height: 1px;
+            background: #e8e8e8;
+            margin: 1.75rem 0;
+        }
+
+        .reviews-section {
+            margin-top: 1.75rem;
+        }
+
+        .review-form-panel {
+            margin-bottom: 1.5rem;
+        }
+
+        .review-form-panel textarea {
+            min-height: 130px;
+            border-radius: 0.75rem;
+        }
+
+        .review-submit {
+            background-color: #222;
+            color: white;
+            border: none;
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1rem;
+        }
+
+        .review-card {
+            height: 100%;
+        }
+
+        .review-author {
+            font-size: 1rem;
+            font-weight: 800;
+            margin-bottom: 0.55rem;
+        }
+
+        .review-comment {
+            color: #444;
+            margin-bottom: 0.75rem;
+        }
+
+        .review-delete {
+            margin-top: 0.8rem;
+        }
+
+        .empty-reviews {
+            border: 1px dashed #d8d8d8;
+            border-radius: 1rem;
+            color: #666;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        body.dark-mode .details-panel,
+        body.dark-mode .description-card,
+        body.dark-mode .review-form-panel,
+        body.dark-mode .review-card {
+            background-color: #1e1e1e;
+            border-color: #333;
+        }
+
+        body.dark-mode .show-location,
+        body.dark-mode .price-line span,
+        body.dark-mode .detail-item,
+        body.dark-mode .review-comment,
+        body.dark-mode .empty-reviews {
+            color: #ddd;
+        }
+
+        @media (max-width: 992px) {
+            .show-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .details-panel {
+                position: static;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .show-img {
+                height: 300px;
+            }
+
+            .owner-actions .btn,
+            .owner-actions form,
+            .owner-actions form .btn {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <div class="show-page">
+        <h1 class="show-title">
+            <%= listing.title %>
+        </h1>
+
+        <p class="show-location">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>
+                <%= listing.location %>, <%= listing.country %>
+            </span>
+        </p>
+
+        <div class="show-shell">
+            <div>
+                <div class="show-media">
+                    <img src="<%= listing.image?.url %>" class="show-img" alt="<%= listing.title %>">
+
+                    <form action="/listings/<%= listing._id %>/wishlist?_method=POST" method="POST"
+                        class="wishlist-form">
+                        <button class="wishlist-btn" type="submit" aria-label="Save listing">
+                            <i
+                                class="<%= savedListings.includes(listing._id.toString()) ? 'fa-solid' : 'fa-regular' %> fa-heart heart-icon"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="description-card">
+                    <h2 class="section-title">About This Stay</h2>
+                    <p class="mb-0">
+                        <%= listing.description %>
+                    </p>
+                </div>
+            </div>
+
+            <aside class="details-panel">
+                <p class="price-line">
+                    &#8377; <%= listing.price.toLocaleString("en-IN") %>
+                        <span>/ night</span>
+                </p>
+
+                <div class="detail-list">
+                    <% if(currUser && listing.owner && listing.owner._id.equals(currUser._id)){ %>
+                        <div class="divider"></div>
+
+                        <div class="owner-actions">
+                            <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark edit-btn">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                                Edit
+                            </a>
+
+                            <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST">
+                                <button class="btn btn-outline-danger" type="submit">
+                                    <i class="fa-solid fa-trash"></i>
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                        <% } %>
+                            <div class="detail-item">
+                                <i class="fa-solid fa-user"></i>
+                                <div>
+                                    <strong>Hosted by</strong><br>
+                                    <span>
+                                        <%= listing.owner ? listing.owner.username : "Anonymous" %>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="detail-item">
+                                <i class="fa-solid fa-map-location-dot"></i>
+                                <div>
+                                    <strong>Location</strong><br>
+                                    <span>
+                                        <%= listing.location %>, <%= listing.country %>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="detail-item">
+                                <i class="fa-solid fa-star"></i>
+                                <div>
+                                    <strong>Reviews</strong><br>
+                                    <span>
+                                        <%= listing.reviews.length %> total
+                                    </span>
+                                </div>
+                            </div>
+                </div>
+            </aside>
+        </div>
+
+        <div class="reviews-section">
+            <div class="divider"></div>
+            <% if(currUser){ %>
+                <div class="review-form-panel">
+                    <h2 class="section-title">Leave a Review</h2>
+                    <form action="/listings/<%= listing._id %>/reviews" method="POST" class="needs-validation"
+                        novalidate>
+                        <fieldset class="starability-slot">
+                            <legend class="visually-hidden">Rating</legend>
+                            <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0"
+                                checked aria-label="No rating." />
+                            <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                            <label for="first-rate1" title="Terrible">1 star</label>
+                            <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                            <label for="first-rate2" title="Not good">2 stars</label>
+                            <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                            <label for="first-rate3" title="Average">3 stars</label>
+                            <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                            <label for="first-rate4" title="Very good">4 stars</label>
+                            <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                            <label for="first-rate5" title="Amazing">5 stars</label>
+                        </fieldset>
+                        <div class="mb-3">
+                            <label class="form-label" for="comment">Comments</label>
+                            <textarea class="form-control" name="review[comment]" id="comment" required></textarea>
+                            <div class="invalid-feedback">Please add some message for review</div>
+                        </div>
+                        <button class="review-submit" type="submit">Submit Review</button>
+                    </form>
+                </div>
+                <% } %>
+
+                    <h2 class="section-title">All Reviews</h2>
+
+                    <% if(listing.reviews.length> 0) { %>
+                        <div class="reviews-grid">
+                            <% for(let review of listing.reviews){ %>
+                                <div class="review-card">
+                                    <h3 class="review-author">
+                                        <i class="fa-solid fa-circle-user"></i>
+                                        @<%= review.author ? review.author.username : "guest" %>
+                                    </h3>
+
+                                    <p class="review-comment">
+                                        <%= review.comment %>
+                                    </p>
+
+                                    <p class="starability-result" data-rating="<%= review.rating %>">
+                                        Rated: <%= review.rating %> stars
+                                    </p>
+                                </div>
+                                <% } %>
+                        </div>
+                        <% } else { %>
+                            <div class="empty-reviews">No reviews yet. Be the first to share your experience.</div>
+                            <% } %>
+        </div>
+    </div>
+
+    <script>
+        const wishlistBtns = document.querySelectorAll(".wishlist-btn");
+
+        wishlistBtns.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const icon = btn.querySelector(".heart-icon");
+
+                icon.classList.toggle("fa-regular");
+                icon.classList.toggle("fa-solid");
+            });
+        });
+    </script>
