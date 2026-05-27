@@ -1,4 +1,10 @@
 {
+  "engines": {
+    "node": "24.14.0"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
   "name": "major-project",
   "version": "1.0.0",
   "description": "",

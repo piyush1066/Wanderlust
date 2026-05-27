@@ -79,7 +79,8 @@ const sessionOptions = {
     }
 }
 
-
+console.log("CLOUD:", process.env.CLOUD_NAME);
+console.log("KEY:", process.env.CLOUD_API_KEY);
 
 app.use(session(sessionOptions));
 app.use(flash());

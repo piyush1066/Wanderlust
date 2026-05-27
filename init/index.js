@@ -20,7 +20,7 @@ const initDB = async () => {
     const updatedData = initData.data.map((obj) => {
         return {
             ...obj,
-            owner: new mongoose.Types.ObjectId("6a099fb174b1ea3944685925")
+            owner: new mongoose.Types.ObjectId("6a15813ba30d196dddc62800")
         };
     });
 
